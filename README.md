@@ -13,7 +13,7 @@ To be able to explore this exmple on your computer
 
 Detailed Potree installation and use workflow for non developers is available [here](https://github.com/Isaramirezca/vge-workflow/blob/isa-branch/Potree.ipynb)
 
-* After installing 
+* After installing "Exmplain here where should each of the files be located"
 
 # Credits
 
