@@ -27,52 +27,27 @@
 		JavaScript files. The src attribute of each <script> tag specifies the path to the JavaScript 
 		file that should be loaded and executed in the browser. -->
 	<script src="../libs/jquery/jquery-3.1.1.min.js"></script>  
-	<!--jQuery library, which is a popular JavaScript library used for manipulating HTML and CSS, 
-		handling events, and making AJAX requests
-	-->
 	<script src="../libs/spectrum/spectrum.js"></script>
-	<!--Spectrum color picker library, which provides a customizable color picker widget for web applications.-->
 	<script src="../libs/jquery-ui/jquery-ui.min.js"></script>
-	<!--jQuery UI library, which provides a set of user interface widgets and effects that can be used in web applications.-->
 	<script src="../libs/other/BinaryHeap.js"></script>
-	<!--BinaryHeap library, which provides a priority queue data structure that can be used in JavaScript programs-->
 	<script src="../libs/tween/tween.min.js"></script>
-	<!-- Tween library, which provides a lightweight animation library for JavaScript. -->
 	<script src="../libs/d3/d3.js"></script>
-	<!--D3 library, which is a powerful JavaScript library used for creating dynamic, data-driven 
-		visualizations in web applications -->
 	<script src="../libs/proj4/proj4.js"></script>
-	<!-- Proj4 library, which provides tools for working with geographic projections in JavaScript.-->
 	<script src="../libs/openlayers3/ol.js"></script>
-	<!-- OpenLayers library, which is a powerful JavaScript library used for creating interactive maps and 
-		geospatial applications.-->
 	<script src="../libs/i18next/i18next.js"></script>
-	<!-- i18next library, which provides internationalization and localization tools for JavaScript applications.-->
 	<script src="../libs/jstree/jstree.js"></script>
-	<!--  jsTree library, which provides a tree view widget that can be used for displaying hierarchical 
-		data in web applications.-->
 	<script src="../libs/potree/potree.js"></script>
-	<!-- Potree library, which is a JavaScript library used for displaying and interacting with 3D point 
-		cloud data in web applications.
-	Resources to learn how the Potree library works were https://www.potree.org/. (The oficial web page / not working)
--->
 	<script src="../libs/plasio/js/laslaz.js"></script>
-	<!--  laslaz.js library, which provides a lightweight LAS and LAZ file parser for JavaScript.-->
 	<script src="../libs/shapefile/shapefile.js"></script>
-
+		
+	<!-- INCLUDE ADDITIONAL DEPENDENCIES HERE -->
 	<script src="../libs/Cesium/Cesium.js"></script>
 	<!-- Cesium is a JavaScript library for creating 3D globes and maps in the browser, and it provides 
 		a range of features for visualizing and interacting with geospatial data. By importing the library using this script tag, 
 		the Cesium library becomes available for use in the rest of the HTML document, and the functions and classes provided by the
 		 library can be called and used in the JavaScript code. -->
-	
 
-	
-	<!-- INCLUDE ADDITIONAL DEPENDENCIES HERE -->
 	<!-- INCLUDE SETTINGS HERE -->
-	
-
-	<!-- This code creates an HTML container element with three child elements that are used to display and control a Potree viewer. -->
 
 
 
@@ -82,15 +57,9 @@
 		<div id="potree_render_area" style="background-image: url('../build/potree/resources/images/background.jpg');">
 			
 			<div id="cesiumContainer" style="position: absolute; width: 100%; height: 100%; background-color:green"></div>
-			
 			<!-- Another div with an id "cesiumContainer" is also included inside the "potree_render_area" div. This div is 
 				used to hold the CesiumJS 3D globe. It is positioned absolutely with a width and height of 100% and has a 
 				green background color. -->
-				<span style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 10000">
-					<!-- <input type="button" value="Default Scheme" onclick="setDefaultScheme()"/> -->
-					<input type="button" value="Custom Scheme" onclick="setCustomScheme()"/>
-					<input type="button" value="Random Scheme" onclick="setRandomScheme()"/>
-				</span>
 		</div>
 		<!-- This line creates a child div element with the id attribute set to potree_render_area. This is the main rendering 
 			area where the point cloud data is displayed. The style attribute sets the background image of the div element to a
@@ -170,60 +139,160 @@
 			section.insertBefore($('#menu_about'));
 
 		});
-
-		Potree.loadPointCloud("../pointclouds/SommerFlightClassified/metadata.json", "SommerFlight", async e => {
-			// Potree.loadPointCloud("../pointclouds/SommerFlight_Potree/metadata.json", "SommerFlight", async e => {
-			let pointcloud = e.pointcloud;
-			let scene = potreeViewer.scene;
-			let material = pointcloud.material;
-			// scene configuration
-			scene.addPointCloud(pointcloud);
-			
-			// // pointcloud configuration
-			pointcloud.position.setZ(0);
-			// pointcloud.rotation.set(0, 0, -0.035);
-			
-			
-			// material configuration
-			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
-			material.size = 0.8;
-			material.elevationRange = [0, 70];
-			material.weightRGB = 1.0;
-			material.weightElevation = 1.0;
-			material.activeAttributeName = "classification";
-			
-			// // scene configuration again (Lets see if I can put it back up)
-			// scene.view.position.set(570975.577, 5398630.521, 1659.311);
-			// scene.view.lookAt(570115.285, 5400866.092, 30.009);
 		
-		
-			// I took this coordenates from the viewer
-			potreeViewer.scene.view.setView(
-				[341187.858, 5671969.144, 994.758],
-				[341187.858, 5671969.144, -61.967],
+		potreeViewer.scene.view.setView(
+			[343595.292, 5669855.389, 2974.723],
+			[341187.858, 5671969.144, -61.967],
 			);
 
-			// for the hierarchy example the projection is obtained from here
-			let pointcloudProjection = "+proj=utm +zone=32N +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
-			// In the Retz example the projection is directly assigned, how do I find out my projection?
-			let mapProjection = proj4.defs("WGS84");
-
-			window.toMap = proj4(pointcloudProjection, mapProjection);
-			window.toScene = proj4(mapProjection, pointcloudProjection);
 		
-			{
-				let bb = potreeViewer.getBoundingBox();
+			
+			// Pointclouds
+			async function loadDatasets(){
+				let scene = potreeViewer.scene;//
+				{// SommerFlight
+					let summer = await Potree.loadPointCloud("../pointclouds/SommerFlightClassified/metadata.json"); 
+					let pointcloud = summer.pointcloud;
+					let material = pointcloud.material;
+					
+					pointcloud.name = "SommerFlight 10.08.2022";
+					pointcloud.position.setZ(0);
+					// material configuration
+					material.size = 0.8;
+					// material.pointSizeType = Potree.PointSizeType.FIXED;
+					material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+					material.elevationRange = [0, 70];
+					material.opacity = 0.1;
+					material.weightRGB = 1.0;
+					material.weightElevation = 1.0;
+					material.activeAttributeName = "rgba";
+					// material.shape = Potree.PointShape.CIRCLE; //What is this? 
+					scene.addPointCloud(pointcloud);
+					// viewer.fitToScreen();
+					pointcloud.visible = true;
 
-				let minWGS84 = proj4(pointcloudProjection, mapProjection, bb.min.toArray());
-				let maxWGS84 = proj4(pointcloudProjection, mapProjection, bb.max.toArray());
-			}
+					// for the hierarchy example the projection is obtained from here
+					// This point cloud projection is UTM zone 32 "obtained from ODM"
+					let pointcloudProjection = "+proj=utm +zone=32N +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
+					// In the Retz example the projection is directly assigned, how do I find out my projection?
+					let mapProjection = proj4.defs("WGS84");
+					
+					window.toMap = proj4(pointcloudProjection, mapProjection);
+					window.toScene = proj4(mapProjection, pointcloudProjection);
+					
+					{
+						let bb = potreeViewer.getBoundingBox();
+						let minWGS84 = proj4(pointcloudProjection, mapProjection, bb.min.toArray());
+						let maxWGS84 = proj4(pointcloudProjection, mapProjection, bb.max.toArray());
+					}
+				}
 
+				{// WinterFlight
+					let winter = await Potree.loadPointCloud("../pointclouds/WinterFlight_Potree/metadata.json"); 
+					let pointcloud = winter.pointcloud;
+					let material = pointcloud.material;
+					
+					pointcloud.name = "WinterFlight 04.04.2023";
+					pointcloud.position.setZ(0);
+					// material configuration
+					material.size = 0.8;
+					material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+					material.elevationRange = [0, 70];
+					material.weightRGB = 1.0;
+					material.weightElevation = 1.0;
+					// material.activeAttributeName = "classification";
+					// material.shape = Potree.PointShape.CIRCLE; //What is this? 
+					scene.addPointCloud(pointcloud);
+					// viewer.fitToScreen();
+					pointcloud.visible = false;
 
+					// for the hierarchy example the projection is obtained from here
+					let pointcloudProjection = "+proj=utm +zone=32N +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
+					// In the Retz example the projection is directly assigned, how do I find out my projection?
+					let mapProjection = proj4.defs("WGS84");
+					
+					window.toMap = proj4(pointcloudProjection, mapProjection);
+					window.toScene = proj4(mapProjection, pointcloudProjection);
+					
+					{
+						let bb = potreeViewer.getBoundingBox();
+						let minWGS84 = proj4(pointcloudProjection, mapProjection, bb.min.toArray());
+						let maxWGS84 = proj4(pointcloudProjection, mapProjection, bb.max.toArray());
+					}
+				}
+
+				{// DTM_1m_NRW
+					//Cloud obtained from https://www.opengeodata.nrw.de/produkte/geobasis/hm/dgm1_xyz/dgm1_xyz/ and converted to LAZ with CloudCompare
+					let nrw = await Potree.loadPointCloud("../pointclouds/DTM_1m_nrw/metadata.json"); 
+					let pointcloud = nrw.pointcloud;
+					let material = pointcloud.material;
+					
+					pointcloud.name = "DTM NRW 2020";
+					pointcloud.position.setZ(0);
+					// material configuration
+					material.size = 0.8;
+					material.pointSizeType = Potree.PointSizeType.FIXED;
+					material.elevationRange = [0, 70];
+					material.weightRGB = 1.0;
+					material.weightElevation = 1.0;
+					// material.activeAttributeName = "classification";
+					// material.shape = Potree.PointShape.CIRCLE; //What is this? 
+					scene.addPointCloud(pointcloud);
+					// viewer.fitToScreen();
+					pointcloud.visible = false;
+
+					// for the hierarchy example the projection is obtained from here
+					let pointcloudProjection = "+proj=utm +zone=32N +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
+					// In the Retz example the projection is directly assigned, how do I find out my projection?
+					let mapProjection = proj4.defs("WGS84");
+					
+					window.toMap = proj4(pointcloudProjection, mapProjection);
+					window.toScene = proj4(mapProjection, pointcloudProjection);
+					
+					{
+						let bb = potreeViewer.getBoundingBox();
+						let minWGS84 = proj4(pointcloudProjection, mapProjection, bb.min.toArray());
+						let maxWGS84 = proj4(pointcloudProjection, mapProjection, bb.max.toArray());
+					}
+				}
+
+				{ // ANNOTATIONS
+				let aRoot = potreeViewer.scene.annotations;
+				let Erft_Neuss_Gnadental = $(`
+										<span>
+											Erft Neuss Gnadental
+												<img src="${Potree.resourcePath}/icons/goto.svg"
+                            name="action_set_scene"
+                            class="annotation-action-icon"
+                            style="filter: invert(1);" />
+										</span>
+														`);
+														Erft_Neuss_Gnadental.find("img[name=action_set_scene]").click((event) => {
+															window.open('https://www.erftverband.de/gewaesserprojekt-neuss-gnadental/', '_blank');
+														});
+
+				let aErft = new Potree.Annotation({
+					title: Erft_Neuss_Gnadental,
+					position: [341064.480, 5671961.420, 200],
+					cameraPosition: [342116.980, 5671178.684, 664.915],
+					cameraTarget: [340978.511, 5672043.827, -55.662],
+					description: `<div style="overflow:scroll ; height:350px">
+						The restoration project is the first segment of a comprehensive 23-segment plan, 
+						covering an area of approximately 0.36 km2. It aligns with the overarching objective of 
+						ecologically enhancing the Erft river. The project encompasses various measures aimed at achieving 
+						goals such as adapting to future discharge conditions, restoring the Erft floodplain's biotope network, 
+						revitalizing the primary floodplain, and enabling self-dynamic development by abandoning bank 
+						stabilisation practices. Commencing in October 2021, the construction concluded successfully in August 2022. 
+						One notable outcome was a substantial increase in the stream's length, expanding from 0.6 km to 1.8 km <br>
+						<img src="../resources/images/start.png" alt="general image" style="width:450px;height:350px;"></div>`
+					
+					// ``
+				});
+				aRoot.add(aErft);
+				
+				
 
 			
-
-			{ // ANNOTATIONS
-				let aRoot = potreeViewer.scene.annotations;
 
 				let aPlaces = new Potree.Annotation({
 					title: "Synthetic Field",
@@ -231,7 +300,7 @@
 					cameraPosition: [341590.459, 5672032.653, 187.476],
 					cameraTarget: [341557.679, 5672077.437, -75.333],
 				});
-				aRoot.add(aPlaces);
+				aErft.add(aPlaces);
 
 				let aStructure = new Potree.Annotation({
 					title: "Structure",
@@ -239,18 +308,52 @@
 					cameraPosition: [340860.319, 5671753.511, 70.244],
 					cameraTarget: [340812.159, 5671804.855, -44.185],
 				});
-				aRoot.add(aStructure);
+				aErft.add(aStructure);
+
+				
 				let aRamp = new Potree.Annotation({
-					title: "Ramp",
+					title: "Slide",
 					position: [341458.833, 5672050.483, 20.190],
 					cameraPosition: [341404.982, 5672063.890, 82.182],
 					cameraTarget: [341506.279, 5672012.575, -39.899],
-					description: `<div style="overflow:scroll ; height:350px"><img src="../resources/images/TemporaryImage.png" alt="The Admissions Window museum text" style="width:450px;height:350px;"> <br> <img src="/documents/AdmissionsWindow02.jpeg" alt="The Admissions Window itself" style="width:450px;height:350px;"></div>`
-					// `<div style="overflow:scroll ; height:350px"><img src="/documents/AdmissionsWindow01.jpeg" alt="The Admissions Window museum text" style="width:450px;height:350px;"> <br> <img src="/documents/AdmissionsWindow02.jpeg" alt="The Admissions Window itself" style="width:450px;height:350px;"></div>`
+					description: `<div style="overflow:scroll ; height:350px"><img src="../resources/images/ramp.png" 
+						alt="a picture of the slide" style="width:450px;height:350px;"><br>A river bottom slide 
+						is a standard structure of river engineering lying below the water level transversely to the current, 
+						which is intended to limit the deep erosion of the water bed.
+						It also makes it easier for migratory fish such as salmon and eel, which naturally occur in the Erft, 
+						to climb out of the Rhine. Here rest zones alternate with short sprint distances for the fish.<br>
+						<img src="../resources/images/RampSection.png" alt="Ramp" style="width:450px;height:350px;">
+						<br>
+						<img src="../resources/images/RampPlanView.png" alt="Ramp" style="width:600px;height:350px;">
+						</div>`
 				});
-				aRoot.add(aRamp);
+				aErft.add(aRamp);
 
-				{ // Attribute Selector Annotation
+				let aBuhne = new Potree.Annotation({
+					title: "Other Interventions",
+					position: [341070.870, 5671947.240, 12.490],
+					cameraPosition: [341049.058, 5671858.869, 64.545],
+					cameraTarget: [341081.398, 5671968.874, -34.584],
+					description: `<div style="overflow:scroll ; height:350px">
+						Groynes can be used as part of water body renaturation. 
+						In this case, they are arranged in such a way that new meanders, 
+						scours and bank erosion are created in a straightened course of water .
+						These groynes are often implemented using biological engineering methods, for example deadwood or boulders are used as groynes.
+						<img src="../resources/images/Reference.png" alt="reference Image" style="width:450px;height:350px;">
+						<br>How exactly the shoreline areas look in the end is decided by nature itself. 
+						The planners only give space and building material. Heaps of gravel, for example, 
+						are gradually removed and the river decides where to carry the stones. 
+						In some places, a small flood has already created new bank erosion and the current has also already made the 
+						bottom clearly visible.<br>
+						<img src="../resources/images/Legend.png" alt="Ramp" style="width:300px;height:300px;">
+						<br>
+						<img src="../resources/images/Interventions.png" alt="Ramp" style="width:500px;height:550px;">
+						</div>`
+				});
+				aErft.add(aBuhne);
+
+			}
+			{ // Attribute Selector Annotation
 					// Create title element with jquery
 					let elTitle = $(`
 					<span>
@@ -258,7 +361,9 @@
 						<img title="Elevation" name="action_elevation" src="${Potree.resourcePath}/icons/profile.svg" class="annotation-action-icon"/>
 						<img title="RGB and Elevation" name="action_both" src="${Potree.resourcePath}/icons/rgb_elevation.png" class="annotation-action-icon"/>
 						<img title="RGB" name="action_rgb" src="${Potree.resourcePath}/icons/rgb.svg" class="annotation-action-icon"/>
+						<img title="classification" name="action_classification" src="${Potree.resourcePath}/icons/area.svg" class="annotation-action-icon"/>
 						</span>`);
+
 						elTitle.find("img[name=action_elevation]").click( () => {
 							scene.pointclouds.forEach( pc => pc.material.activeAttributeName = "elevation" );
 						});
@@ -268,77 +373,25 @@
 						elTitle.find("img[name=action_both]").click( () => {
 							scene.pointclouds.forEach( pc => pc.material.activeAttributeName = "composite" );
 						});
+						elTitle.find("img[name=action_classification]").click( () => {
+							scene.pointclouds.forEach( pc => pc.material.activeAttributeName = "classification" );
+						});
 						// Give the annotation a meaningful string representation for the sidebar
 						elTitle.toString = () => "Color Setting";
 						
 						// Same as with other annotations, except title is a jquery object this time.
 						let aActions = new Potree.Annotation({
-							position: [340967.873, 5672114.213, 0],
+							position: [340711.140, 5671734.390, 100],
 							title: elTitle
 						});
 						scene.annotations.add(aActions);
 					}
-		
-
-			}
-
-// 			// // Aquí comienza lo de Shapefile
-
-// 			{
-// 				// define the transformation from shapefile to point cloud coordinate systems
-// 				proj4.defs("WGS84", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
-// 				proj4.defs("pointcloud", pointcloud.projection);
-// 				let transform = proj4("WGS84", "pointcloud");
-
-// 				const loader = new Potree.ShapefileLoader();
-// 				loader.transform = transform;
-
-// 				// group all shapefile scene nodes into this node
-// 				const shapeNode = new THREE.Object3D();
-// 				potreeViewer.scene.scene.add(shapeNode);
-
-// 				// load natural.shp and change colors to green
-// 				const shpArea = await loader.load("../resources/Isa_shp");
-// 				shapeNode.add(shpArea.node);
-
-// 				shpArea.node.traverse(node => {
-// 					if(node.material){
-// 						node.material.color.setRGB(0, 1, 0)
-// 					}
-// 				});
-				
-				
-
-// 				// this is necessary so that fat lines are correctly sized
-// 				potreeViewer.addEventListener("update", () => {
-// 					const size = potreeViewer.renderer.getSize(new THREE.Vector2());
-// 					shpArea.setResolution(size.width, size.height);
-// 				});
+			};
+			
+			loadDatasets();
+	
 
 
-// 				potreeViewer.onGUILoaded(() => {
-// 					// Add entry to object list in sidebar
-// 					let tree = $(`#jstree_scene`);
-// 					let parentNode = "other";
-
-// 					let shpNaterialID = tree.jstree('create_node', parentNode, { 
-// 							"text": "natural", 
-// 							"icon": `${Potree.resourcePath}/icons/triangle.svg`,
-// 							"object": shpArea.node,
-// 							"data": shpArea.node,
-// 						}, 
-// 						"last", false, false);
-// 					tree.jstree(shpArea.node.visible ? "check_node" : "uncheck_node", shpNaterialID);
-
-
-// 				});
-				
-// 			}
-
-
-// // Aquí termina lo de Shapefile
-		});
-		
 		
 		function loop(timestamp){
 			requestAnimationFrame(loop);
@@ -407,65 +460,6 @@
 
 </script>
 
-<script type="module">	
-	import * as THREE from "../libs/three.js/build/three.module.js";
-	
-	// window.setDefaultScheme = function(){
-	// 	potreeViewer.setClassifications(Potree.ClassificationScheme.DEFAULT);
-	// }
-	window.setCustomScheme = function(){
-		potreeViewer.setClassifications({
-			0:       { visible: true, name: 'unclassified'				, color: [0.46, 0.39, 0.39, 1.0] },
-			1:       { visible: true, name: 'Road'						, color: [0.19, 0.25, 0.35, 1.0] },
-			2:       { visible: true, name: 'River'        				, color: [139, 69, 19, 1] },
-			3:       { visible: true, name: 'Structures'        		, color: [0.45, 0.06, 0.06, 1.0] },
-			4:       { visible: true, name: 'Dike'        				, color: [1, 139, 69, 19] },
-			5:       { visible: true, name: 'Agricultural Field'        , color: [1.0, 1.0, 0.0, 1.0] },
-			6:       { visible: true, name: 'Diverse Vegetation'        , color: [0.0, 1.0, 0.0, 1.0] },
-			DEFAULT: { visible: false, name: 'other' 					, color: [0.0, 0.0, 0.0, 1.0] },
-		});
-	}
-	
-	window.setRandomScheme = function(){
-		const scheme = {};
-		for(let i = 0; i < 32; i++){
-			scheme[i] = { visible: true, name: `random:_${i}`, color: [Math.random(), Math.random(), Math.random(), 1.0] };
-		}
-		
-		potreeViewer.setClassifications(scheme);
-	}
 
-</script>
   </body>
 </html>
-
-<!-- 
-<script type="module">	
-	import * as THREE from "../libs/three.js/build/three.module.js";
-	
-	window.setDefaultScheme = function(){
-		potreeViewer.setClassifications(Potree.ClassificationScheme.DEFAULT);
-	}
-	window.setCustomScheme = function(){
-		potreeViewer.setClassifications({
-			0:       { visible: true, name: 'unclassified'				, color: [1.0, 1.0, 1.0, 1.0] },
-			1:       { visible: true, name: 'Road'						, color: [0.0, 1.0, 0.0, 1.0] },
-			2:       { visible: true, name: 'River'        				, color: [0.0, 1.0, 0.0, 1.0] },
-			3:       { visible: true, name: 'Structures'        		, color: [0.0, 1.0, 0.0, 1.0] },
-			4:       { visible: true, name: 'Dike'        				, color: [0.0, 1.0, 0.0, 1.0] },
-			5:       { visible: true, name: 'Agricultural Field'        , color: [0.0, 1.0, 0.0, 1.0] },
-			6:       { visible: true, name: 'Diverse Vegetation'        , color: [0.0, 1.0, 0.0, 1.0] },
-			DEFAULT: { visible: false, name: 'other' 					, color: [0.0, 0.0, 0.0, 1.0] },
-		});
-	}
-	
-	window.setRandomScheme = function(){
-		const scheme = {};
-		for(let i = 0; i < 32; i++){
-			scheme[i] = { visible: true, name: `random:_${i}`, color: [Math.random(), Math.random(), Math.random(), 1.0] };
-		}
-		
-		potreeViewer.setClassifications(scheme);
-	}
-
-</script> -->
