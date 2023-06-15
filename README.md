@@ -13,14 +13,14 @@ To be able to explore this example on your computer
 
 Detailed Potree installation and use workflow for non-developers is available [here](https://github.com/Isaramirezca/vge-workflow/blob/isa-branch/Potree.ipynb)
 
-* After installation, navigate to the 'potree develop' folder and create a new folder with a name of your choice
-* Inside this new folder locate the HTML files from this showcase
+* After installation, navigate to the `potree develop` folder and create a new folder with a name of your choice
+* Inside this new folder locate the `HTML` files from this showcase
 * Inside the `<potreeDirectory>/potree-develop/resources/images` locate the images from this showcase
 * Launch Potree
   
 A step-by-step guide on how to launch potree is available [here](https://github.com/Isaramirezca/vge-workflow/blob/isa-branch/Potree.ipynb)
 
-* Look for your folder and click on any of the HTML files to visualize the showcase.
+* Look for your folder and click on any of the `HTML` files to visualize the showcase.
 
 # Credits
 
