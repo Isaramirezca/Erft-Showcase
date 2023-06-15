@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>Potree Viewer</title>
+
+	<link rel="stylesheet" type="text/css" href="../build/potree/potree.css">
+	<link rel="stylesheet" type="text/css" href="../libs/jquery-ui/jquery-ui.min.css">
+	<link rel="stylesheet" type="text/css" href="../libs/openlayers3/ol.css">
+	<link rel="stylesheet" type="text/css" href="../libs/spectrum/spectrum.css">
+	<link rel="stylesheet" type="text/css" href="../libs/jstree/themes/mixed/style.css">
+</head>
+
+<body>
+	<script src="../libs/jquery/jquery-3.1.1.min.js"></script>
+	<script src="../libs/spectrum/spectrum.js"></script>
+	<script src="../libs/jquery-ui/jquery-ui.min.js"></script>
+	<script src="../libs/other/BinaryHeap.js"></script>
+	<script src="../libs/tween/tween.min.js"></script>
+	<script src="../libs/d3/d3.js"></script>
+	<script src="../libs/proj4/proj4.js"></script>
+	<script src="../libs/openlayers3/ol.js"></script>
+	<script src="../libs/i18next/i18next.js"></script>
+	<script src="../libs/jstree/jstree.js"></script>
+	<script src="../build/potree/potree.js"></script>
+	<script src="../libs/plasio/js/laslaz.js"></script>
+	
+	
+	<div class="potree_container" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; ">
+		<div id="potree_render_area" style="background-image: url('../build/potree/resources/images/background.jpg');"></div>
+		<div id="potree_sidebar_container"> </div>
+	</div>
+	
+
+
+	<script type="module">
+	
+	import * as THREE from "../libs/three.js/build/three.module.js";
+
+		window.viewer = new Potree.Viewer(document.getElementById("potree_render_area"));
+		
+		viewer.setEDLEnabled(false);
+		viewer.setFOV(60);
+		viewer.setPointBudget(1_000_000);
+		viewer.loadSettingsFromURL();
+		viewer.setBackground("skybox");
+		
+		viewer.setDescription(`Erft Neuss-Gnadental, Point cloud courtesy of <a href="https://www.zumbroich.com/de/home">Planungsbüro Zumbroich</a> and Dr. Georg Lamberty.`);
+		
+		viewer.loadGUI(() => {
+			viewer.setLanguage('en');
+			$("#menu_tools").next().show();
+			$("#menu_clipping").next().show();
+			viewer.toggleSidebar();
+		});
+		
+		// Load and add point cloud to scene
+		Potree.loadPointCloud("../pointclouds/SommerFlightClassified/metadata.json", "SommerFlight_Potree", async function(e){
+			viewer.scene.addPointCloud(e.pointcloud);
+			let material = e.pointcloud.material;
+			material.size = 0.7;
+			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+			material.activeAttributeName = "rgba";
+			
+			
+			viewer.fitToScreen();
+
+			{ // load a geopackage
+				// proj4.defs("WGS84", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
+				// proj4.defs("pointcloud", pointcloud.projection);
+				// let transform = proj4("WGS84", "pointcloud");
+				
+				// proj4.defs("WGS84", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
+				// proj4.defs("pointcloud", pointcloud.projection);
+				// const params = {
+				// 	transform: proj4("WGS84", "pointcloud"),
+				// };
+
+				const url = "../resources\geopackage\Area2.gpkg";
+				const geopackage = await Potree.GeoPackageLoader.loadUrl(url);
+				// const geopackage = await Potree.GeoPackageLoader.loadUrl(url, params);
+				scene.addGeopackage(geopackage);
+			}
+			
+		});
+
+	</script>
+
+<script type="module">
+
+	import * as THREE from "../libs/three.js/build/three.module.js";
+	
+		const animation = new Potree.CameraAnimation(viewer);
+
+
+		const positions = [
+			[341459.300, 5672204.540, -72],
+			[341471.730, 5672102.970, -72],
+			[341429.730, 5672026.230, -72],
+			[341381.190, 5672060.340, -72],
+			[341284.510, 5672020.370, -72],
+			[341298.530, 5672039.480, -72],
+			[341265.530, 5672027.100, -72],
+			[341220.490, 5672040.380, -72],
+			[341218.370, 5672055.500, -72],
+			[341225.710, 5672072.120, -72],
+			[341208.770, 5672101.010, -72],
+			[341179.420, 5672082.480, -72],
+			
+		];
+
+		const targets = [
+			[341457.400, 5672155.340, -72],
+			[341454.900, 5672049.550, -72],
+			[341398.030, 5672022.710, -72],
+			[341354.830, 5672048.710, -72],
+			[341306.690, 5672036.520, -72],
+			[341272.900, 5672035.260, -72],
+			[341242.900, 5672030.600, -72],
+			[341218.000, 5672042.080, -72],
+			[341212.740, 5672071.530, -72],
+			[341219.740, 5672101.430, -72],
+			[341186.980, 5672110.970, -72],
+			[341133.310, 5672085.260, -72],
+		];
+
+		for(let i = 0; i < positions.length; i++){
+			const cp = animation.createControlPoint();
+
+			cp.position.set(...positions[i]);
+			cp.target.set(...targets[i]);
+		}
+
+		viewer.scene.addCameraAnimation(animation);
+
+
+	</script>
+	
+	
+  </body>
+</html>
