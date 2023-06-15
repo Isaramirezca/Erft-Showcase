@@ -5,7 +5,7 @@ Explain more about what can be found in this 3D visualization.
 
 # Getting Started
 
-### Install on your PC
+### Install Potree on your PC
 
 To be able to explore this exmple on your computer 
 
