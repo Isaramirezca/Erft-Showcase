@@ -1,5 +1,5 @@
 # About
-The showcase is based on the restoration of the [Erft](https://www.erftverband.de/bauarbeiten-der-erft-renaturierung-in-neuss-gnadental-haben-begonnen/) in the first of 23 segments with an area of approximately 0.36 km2 which goes from approximately abscissa 0+500 to 1+900. 
+The showcase is based on the restoration of the [Erft](https://www.erftverband.de/bauarbeiten-der-erft-renaturierung-in-neuss-gnadental-haben-begonnen/) in the first of 23 segments with an area of approximately 0.36 km2 which goes from abscissa 0+500 to 1+900. 
 
 Explain more about what can be found in this 3D visualization. 
 
